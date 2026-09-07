@@ -3,30 +3,12 @@ public class Student {
     private int id;
     private String name;
     private double marks;
-    private String grade;
 
+    // Constructor
     public Student(int id, String name, double marks) {
         this.id = id;
         this.name = name;
         this.marks = marks;
-        calculateGrade();
-    }
-
-    // Calculate Grade Automatically
-    private void calculateGrade() {
-
-        if (marks >= 90)
-            grade = "A+";
-        else if (marks >= 80)
-            grade = "A";
-        else if (marks >= 70)
-            grade = "B";
-        else if (marks >= 60)
-            grade = "C";
-        else if (marks >= 50)
-            grade = "D";
-        else
-            grade = "F";
     }
 
     // Getters
@@ -42,20 +24,44 @@ public class Student {
         return marks;
     }
 
-    public String getGrade() {
-        return grade;
+    // Setters
+    public void setName(String name) {
+        this.name = name;
     }
 
-    // Update Marks
     public void setMarks(double marks) {
         this.marks = marks;
-        calculateGrade();
     }
 
-    // Display Student
-    public void display() {
+    // Calculate Grade
+    public String getGrade() {
 
-        System.out.printf("%-8d %-15s %-10.2f %-5s%n",
-                id, name, marks, grade);
+        if (marks >= 90) {
+            return "A+";
+        } else if (marks >= 80) {
+            return "A";
+        } else if (marks >= 70) {
+            return "B";
+        } else if (marks >= 60) {
+            return "C";
+        } else if (marks >= 50) {
+            return "D";
+        } else {
+            return "F";
+        }
+    }
+
+    // Display student information
+    @Override
+    public String toString() {
+        return "ID: " + id
+                + " | Name: " + name
+                + " | Marks: " + marks
+                + " | Grade: " + getGrade();
+    }
+
+    // Convert student data into file format
+    public String toFileString() {
+        return id + "," + name + "," + marks;
     }
 }

@@ -1,3 +1,5 @@
+package codealpha_studentgradetracker;
+
 import java.util.Scanner;
 
 public class Main {
@@ -7,26 +9,30 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         GradeTracker tracker = new GradeTracker();
 
-        while (true) {
+        int choice;
 
-            System.out.println("\n========================================");
-            System.out.println("      STUDENT GRADE TRACKER SYSTEM");
+        do {
+
+            System.out.println();
             System.out.println("========================================");
+            System.out.println("       STUDENT GRADE TRACKER");
+            System.out.println("========================================");
+
             System.out.println("1. Add Student");
-            System.out.println("2. View All Students");
-            System.out.println("3. Search Student");
-            System.out.println("4. Update Student Marks");
-            System.out.println("5. Delete Student");
-            System.out.println("6. Calculate Average");
-            System.out.println("7. Highest Marks");
-            System.out.println("8. Lowest Marks");
+            System.out.println("2. Display All Students");
+            System.out.println("3. Calculate Average Marks");
+            System.out.println("4. Find Highest Marks");
+            System.out.println("5. Find Lowest Marks");
+            System.out.println("6. Search Student");
+            System.out.println("7. Update Student Marks");
+            System.out.println("8. Delete Student");
             System.out.println("9. Total Students");
             System.out.println("10. Exit");
-            System.out.println("========================================");
 
+            System.out.println("========================================");
             System.out.print("Enter your choice: ");
 
-            int choice = sc.nextInt();
+            choice = sc.nextInt();
 
             switch (choice) {
 
@@ -40,7 +46,7 @@ public class Main {
                     System.out.print("Enter Student Name: ");
                     String name = sc.nextLine();
 
-                    System.out.print("Enter Student Marks: ");
+                    System.out.print("Enter Marks: ");
                     double marks = sc.nextDouble();
 
                     if (marks < 0 || marks > 100) {
@@ -50,6 +56,7 @@ public class Main {
 
                     Student student = new Student(id, name, marks);
                     tracker.addStudent(student);
+
                     break;
 
                 case 2:
@@ -57,46 +64,45 @@ public class Main {
                     break;
 
                 case 3:
-
-                    System.out.print("Enter Student ID to Search: ");
-                    id = sc.nextInt();
-                    tracker.searchStudent(id);
-                    break;
-
-                case 4:
-
-                    System.out.print("Enter Student ID: ");
-                    id = sc.nextInt();
-
-                    System.out.print("Enter New Marks: ");
-                    marks = sc.nextDouble();
-
-                    if (marks < 0 || marks > 100) {
-                        System.out.println("Marks should be between 0 and 100.");
-                        break;
-                    }
-
-                    tracker.updateStudentMarks(id, marks);
-                    break;
-
-                case 5:
-
-                    System.out.print("Enter Student ID to Delete: ");
-                    id = sc.nextInt();
-
-                    tracker.deleteStudent(id);
-                    break;
-
-                case 6:
                     tracker.calculateAverage();
                     break;
 
-                case 7:
+                case 4:
                     tracker.highestMarks();
                     break;
 
-                case 8:
+                case 5:
                     tracker.lowestMarks();
+                    break;
+
+                case 6:
+
+                    System.out.print("Enter Student ID to search: ");
+                    int searchId = sc.nextInt();
+
+                    tracker.searchStudent(searchId);
+
+                    break;
+
+                case 7:
+
+                    System.out.print("Enter Student ID to update: ");
+                    int updateId = sc.nextInt();
+
+                    System.out.print("Enter New Marks: ");
+                    double newMarks = sc.nextDouble();
+
+                    tracker.updateStudentMarks(updateId, newMarks);
+
+                    break;
+
+                case 8:
+
+                    System.out.print("Enter Student ID to delete: ");
+                    int deleteId = sc.nextInt();
+
+                    tracker.deleteStudent(deleteId);
+
                     break;
 
                 case 9:
@@ -105,13 +111,21 @@ public class Main {
 
                 case 10:
 
-                    System.out.println("\nThank You!");
-                    System.out.println("Exiting Student Grade Tracker...");
-                    System.exit(0);
+                    System.out.println();
+                    System.out.println(
+                            "Thank you for using Student Grade Tracker!");
+
+                    break;
 
                 default:
-                    System.out.println("Invalid Choice! Please Try Again.");
+
+                    System.out.println(
+                            "Invalid choice! Please try again.");
             }
-        }
+
+        } while (choice != 10);
+
+        sc.close();
     }
+}
 }

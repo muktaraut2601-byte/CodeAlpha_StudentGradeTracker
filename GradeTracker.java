@@ -1,10 +1,19 @@
+package codealpha_studentgradetracker;
+
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class GradeTracker {
 
-    private ArrayList<Student> students = new ArrayList<>();
+    private ArrayList<Student> students;
+    private final String FILE_NAME = "students.txt";
 
-    // Add Student
+    public GradeTracker() {
+        students = new ArrayList<>();
+        loadFromFile();
+    }
+
     public void addStudent(Student student) {
 
         if (isDuplicateId(student.getId())) {
@@ -13,21 +22,22 @@ public class GradeTracker {
         }
 
         students.add(student);
+        saveToFile();
+
         System.out.println("Student Added Successfully!");
     }
 
-    // Check Duplicate ID
     public boolean isDuplicateId(int id) {
 
-        for (Student s : students) {
-            if (s.getId() == id) {
+        for (Student student : students) {
+            if (student.getId() == id) {
                 return true;
             }
         }
+
         return false;
     }
 
-    // Display All Students
     public void displayStudents() {
 
         if (students.isEmpty()) {
@@ -35,30 +45,38 @@ public class GradeTracker {
             return;
         }
 
-        System.out.println("\n=====================================================");
-        System.out.printf("%-8s %-15s %-10s %-8s%n",
-                "ID", "NAME", "MARKS", "GRADE");
-        System.out.println("-----------------------------------------------------");
+        System.out.println();
+        System.out.println("==============================================================");
+        System.out.println("                    STUDENT RECORDS");
+        System.out.println("==============================================================");
 
-        for (Student s : students) {
-            s.display();
+        System.out.printf("%-10s %-20s %-12s %-10s%n",
+                "ID", "NAME", "MARKS", "GRADE");
+
+        System.out.println("--------------------------------------------------------------");
+
+        for (Student student : students) {
+            student.display();
         }
 
-        System.out.println("=====================================================");
+        System.out.println("==============================================================");
     }
 
-    // Search Student
     public void searchStudent(int id) {
 
-        for (Student s : students) {
+        for (Student student : students) {
 
-            if (s.getId() == id) {
+            if (student.getId() == id) {
 
                 System.out.println("\nStudent Found");
                 System.out.println("----------------------------------------");
-                System.out.printf("%-8s %-15s %-10s %-8s%n",
+
+                System.out.printf("%-10s %-20s %-12s %-10s%n",
                         "ID", "NAME", "MARKS", "GRADE");
-                s.display();
+
+                student.display();
+
+                System.out.println("----------------------------------------");
                 return;
             }
         }
@@ -66,14 +84,20 @@ public class GradeTracker {
         System.out.println("Student Not Found!");
     }
 
-    // Update Marks
     public void updateStudentMarks(int id, double marks) {
 
-        for (Student s : students) {
+        if (marks < 0 || marks > 100) {
+            System.out.println("Marks should be between 0 and 100.");
+            return;
+        }
 
-            if (s.getId() == id) {
+        for (Student student : students) {
 
-                s.setMarks(marks);
+            if (student.getId() == id) {
+
+                student.setMarks(marks);
+                saveToFile();
+
                 System.out.println("Marks Updated Successfully!");
                 return;
             }
@@ -82,14 +106,19 @@ public class GradeTracker {
         System.out.println("Student Not Found!");
     }
 
-    // Delete Student
     public void deleteStudent(int id) {
 
-        for (Student s : students) {
+        Iterator<Student> iterator = students.iterator();
 
-            if (s.getId() == id) {
+        while (iterator.hasNext()) {
 
-                students.remove(s);
+            Student student = iterator.next();
+
+            if (student.getId() == id) {
+
+                iterator.remove();
+                saveToFile();
+
                 System.out.println("Student Deleted Successfully!");
                 return;
             }
@@ -98,7 +127,6 @@ public class GradeTracker {
         System.out.println("Student Not Found!");
     }
 
-    // Average Marks
     public void calculateAverage() {
 
         if (students.isEmpty()) {
@@ -108,15 +136,15 @@ public class GradeTracker {
 
         double total = 0;
 
-        for (Student s : students) {
-            total += s.getMarks();
+        for (Student student : students) {
+            total += student.getMarks();
         }
 
-        System.out.printf("Average Marks : %.2f%n",
-                total / students.size());
+        double average = total / students.size();
+
+        System.out.printf("Average Marks : %.2f%n", average);
     }
 
-    // Highest Marks
     public void highestMarks() {
 
         if (students.isEmpty()) {
@@ -126,21 +154,21 @@ public class GradeTracker {
 
         Student highest = students.get(0);
 
-        for (Student s : students) {
+        for (Student student : students) {
 
-            if (s.getMarks() > highest.getMarks()) {
-                highest = s;
+            if (student.getMarks() > highest.getMarks()) {
+                highest = student;
             }
         }
 
         System.out.println("\nHighest Scorer");
         System.out.println("----------------------------------------");
-        System.out.printf("%-8s %-15s %-10s %-8s%n",
-                "ID", "NAME", "MARKS", "GRADE");
+
         highest.display();
+
+        System.out.println("----------------------------------------");
     }
 
-    // Lowest Marks
     public void lowestMarks() {
 
         if (students.isEmpty()) {
@@ -150,23 +178,69 @@ public class GradeTracker {
 
         Student lowest = students.get(0);
 
-        for (Student s : students) {
+        for (Student student : students) {
 
-            if (s.getMarks() < lowest.getMarks()) {
-                lowest = s;
+            if (student.getMarks() < lowest.getMarks()) {
+                lowest = student;
             }
         }
 
         System.out.println("\nLowest Scorer");
         System.out.println("----------------------------------------");
-        System.out.printf("%-8s %-15s %-10s %-8s%n",
-                "ID", "NAME", "MARKS", "GRADE");
+
         lowest.display();
+
+        System.out.println("----------------------------------------");
     }
 
-    // Total Students
     public void totalStudents() {
-
         System.out.println("Total Students : " + students.size());
+    }
+
+    private void saveToFile() {
+
+        try (BufferedWriter writer =
+                     new BufferedWriter(new FileWriter(FILE_NAME))) {
+
+            for (Student student : students) {
+                writer.write(student.toFileString());
+                writer.newLine();
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error while saving student data.");
+        }
+    }
+
+    private void loadFromFile() {
+
+        File file = new File(FILE_NAME);
+
+        if (!file.exists()) {
+            return;
+        }
+
+        try (BufferedReader reader =
+                     new BufferedReader(new FileReader(FILE_NAME))) {
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+
+                String[] data = line.split(",");
+
+                if (data.length == 3) {
+
+                    int id = Integer.parseInt(data[0]);
+                    String name = data[1];
+                    double marks = Double.parseDouble(data[2]);
+
+                    students.add(new Student(id, name, marks));
+                }
+            }
+
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error while loading student data.");
+        }
     }
 }
